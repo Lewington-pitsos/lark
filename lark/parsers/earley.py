@@ -308,7 +308,7 @@ class Parser:
 
         if not solutions:
             expected_tokens = [t.expect for t in to_scan]
-            raise UnexpectedEOF(expected_tokens)
+            raise DataException(expected_tokens)
         elif len(solutions) > 1:
             assert False, 'Earley should not generate multiple start symbol items!'
 
@@ -317,6 +317,12 @@ class Parser:
         forest_tree_visitor = forest_tree_visitor_cls(self.callbacks, self.forest_sum_visitor and self.forest_sum_visitor())
 
         return forest_tree_visitor.visit(solutions[0])
+
+class DataException(UnexpectedEOF):
+    def __init__(self, expected):
+        super().__init__(expected)
+        self.expected = expected
+
 
 
 class ApplyCallbacks(Transformer_InPlace):
